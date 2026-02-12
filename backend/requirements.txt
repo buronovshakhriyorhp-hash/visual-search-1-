@@ -1,14 +1,8 @@
 fastapi
 uvicorn
 python-multipart
+httpx
 requests
-Pillow
-numpy
-scikit-learn
-faiss-cpu
-torch
-torchvision
-google-search-results
-pydantic-settings
 python-dotenv
-aiofiles
+pydantic-settings
+google-search-results
