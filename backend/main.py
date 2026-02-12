@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add current directory to sys.path for Vercel imports
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
