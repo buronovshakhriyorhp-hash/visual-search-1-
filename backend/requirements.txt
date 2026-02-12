@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+requests
+Pillow
+numpy
+scikit-learn
+faiss-cpu
+torch
+torchvision
+google-search-results
+pydantic-settings
+python-dotenv
+aiofiles
