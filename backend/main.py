@@ -27,8 +27,9 @@ app.add_middleware(
 )
 
 # Ensure uploads directory exists
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Ensure uploads directory exists (Disabled for Vercel)
+# os.makedirs("uploads", exist_ok=True)
+# app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def read_root():
