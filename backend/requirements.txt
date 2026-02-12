@@ -4,5 +4,6 @@ python-multipart
 httpx
 requests
 python-dotenv
+pydantic
 pydantic-settings
 google-search-results
