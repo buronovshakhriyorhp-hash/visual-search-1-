@@ -8,7 +8,6 @@ from functools import lru_cache
 from config import get_settings
 from exceptions import ExternalAPIError
 
-# Configure Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -24,9 +23,6 @@ class VisualSearchEngine:
 
     async def _upload_to_imgbb(self, image_bytes: bytes, client: httpx.AsyncClient) -> str:
         try:
-            # logger.info(f"Uploading image to ImgBB...") 
-            # (Optional: reduce logging of raw bytes or large objects)
-            
             payload = {
                 "key": settings.IMGBB_API_KEY,
                 "image": base64.b64encode(image_bytes).decode('utf-8'),
@@ -70,13 +66,10 @@ class VisualSearchEngine:
         
         async with httpx.AsyncClient() as client:
             try:
-                # Step 1: Upload to ImgBB
                 img_url = await self._upload_to_imgbb(image_bytes, client)
                 
-                # Step 2: Search Google Lens
                 search_results = await self._search_serpapi(img_url, client)
                 
-                # Step 3: Parse Results
                 visual_matches = []
                 if "visual_matches" in search_results:
                     for match in search_results["visual_matches"]:

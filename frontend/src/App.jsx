@@ -1,9 +1,8 @@
 import React, { useState, useRef, useReducer } from 'react';
 import ResultsGrid from './components/ResultsGrid';
 
-// State Management Definition
 const initialState = {
-    status: 'idle', // idle, uploading, searching, success, error
+    status: 'idle',
     file: null,
     preview: null,
     results: null,
@@ -22,7 +21,6 @@ function reducer(state, action) {
                 preview: action.payload.preview
             };
         case 'UPLOAD_START':
-            // Keep preview and file, just update status
             return { ...state, status: 'searching', error: null, statusMessages: [] };
         case 'SEARCH_SUCCESS':
             return {
@@ -30,7 +28,6 @@ function reducer(state, action) {
                 status: 'success',
                 results: {
                     visual_matches: action.payload.visual_matches
-                    // Local matches removed
                 },
                 latency: action.payload.latency,
                 statusMessages: action.payload.status_messages || []
@@ -90,7 +87,7 @@ function App() {
         formData.append('file', state.file);
 
         try {
-            const response = await fetch('/api/search', {
+            const response = await fetch('http://localhost:8001/api/search', {
                 method: 'POST',
                 body: formData,
             });
@@ -102,8 +99,14 @@ function App() {
             const data = await response.json();
             dispatch({ type: 'SEARCH_SUCCESS', payload: data });
         } catch (err) {
-            console.error(err);
-            dispatch({ type: 'SEARCH_ERROR', payload: "Failed to fetch results. Ensure backend is running." });
+            console.error('Search error:', err);
+            let errorMessage = "Failed to connect to backend server.";
+
+            if (err.message) {
+                errorMessage = err.message;
+            }
+
+            dispatch({ type: 'SEARCH_ERROR', payload: errorMessage });
         }
     };
 
