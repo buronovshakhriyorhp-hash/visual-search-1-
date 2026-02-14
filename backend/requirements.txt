@@ -9,7 +9,4 @@ pydantic-settings
 google-search-results
 Pillow
 gunicorn
-sqlalchemy
-passlib[bcrypt]
-python-jose[cryptography]
-psycopg2-binary
+
