@@ -1,5 +1,8 @@
 import React, { useState, useRef, useReducer } from 'react';
 import ResultsGrid from './components/ResultsGrid';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 const initialState = {
     status: 'idle',
@@ -41,7 +44,8 @@ function reducer(state, action) {
     }
 }
 
-function App() {
+function SearchApp() {
+    const { user, logout, token } = useAuth();
     const [state, dispatch] = useReducer(reducer, initialState);
     const fileInputRef = useRef(null);
 
@@ -92,8 +96,16 @@ function App() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/search`, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
             });
+
+            if (response.status === 401) {
+                logout(); // Token expired or invalid
+                throw new Error("Session expired. Please log in again.");
+            }
 
             if (!response.ok) {
                 throw new Error(`Server error: ${response.statusText}`);
@@ -124,10 +136,13 @@ function App() {
                         </div>
                         <h1 className="text-xl font-bold text-gray-900 tracking-tight">VisualSearch<span className="text-indigo-600">Pro</span></h1>
                     </div>
-                    <nav className="flex gap-6 text-sm font-medium text-gray-500">
+                    <nav className="flex gap-6 text-sm font-medium text-gray-500 items-center">
                         <div className="text-gray-500">
                             {state.latency && <span className="text-green-600 font-mono text-xs bg-green-50 px-2 py-1 rounded-md border border-green-100">Latency: {state.latency}</span>}
                         </div>
+                        <button onClick={logout} className="text-red-500 hover:text-red-700 font-semibold">
+                            Log Out
+                        </button>
                     </nav>
                 </div>
             </header>
@@ -233,4 +248,26 @@ function App() {
     );
 }
 
-export default App;
+function Main() {
+    const { user } = useAuth();
+    const [view, setView] = useState('login'); // 'login' or 'register'
+
+    if (user) {
+        return <SearchApp />;
+    }
+
+    if (view === 'register') {
+        return <Register onSwitchToLogin={() => setView('login')} />;
+    }
+
+    return <Login onSwitchToRegister={() => setView('register')} />;
+}
+
+export default function App() {
+    return (
+        <AuthProvider>
+            <Main />
+        </AuthProvider>
+    );
+}
+
